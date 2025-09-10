@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Tourist ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #1a202c; color: #e2e8f0; }
+        .card { backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%); background-color: rgba(30, 41, 59, 0.75); border: 1px solid rgba(255, 255, 255, 0.125); }
+        .btn { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; cursor: pointer; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+<div class="container mx-auto p-8 rounded-xl shadow-lg w-full max-w-lg space-y-8 card">
+    <h1 class="text-3xl font-bold text-center text-white mb-6">Digital Tourist ID</h1>
+
+    <!-- Main Buttons -->
+    <div id="main-menu" class="flex flex-col space-y-4">
+        <button id="start-trip-btn" class="btn bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg text-lg hover:bg-blue-700">Start a New Trip</button>
+        <button id="end-trip-btn" class="btn bg-red-600 text-white font-semibold py-3 px-6 rounded-lg text-lg hover:bg-red-700">End a Trip</button>
+    </div>
+
+    <!-- Start Trip Form -->
+    <div id="start-trip-form" class="hidden space-y-4">
+        <h2 class="text-xl font-semibold text-white">Tourist Registration</h2>
+        <p class="text-sm text-gray-400"><span class="font-bold text-yellow-400">Note:</span> KYC verification is simulated.</p>
+        <form id="registration-form" class="space-y-4">
+            <div><label for="name" class="block text-sm font-medium text-gray-300">Full Name</label><input type="text" id="name" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"></div>
+            <div><label for="age" class="block text-sm font-medium text-gray-300">Age</label><input type="number" id="age" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"></div>
+            <div><label for="dob" class="block text-sm font-medium text-gray-300">Date of Birth</label><input type="date" id="dob" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"></div>
+            <div>
+                <label class="block text-sm font-medium text-gray-300">KYC Document</label>
+                <div class="mt-1 flex space-x-4">
+                    <label class="inline-flex items-center"><input type="radio" name="kyc_type" value="aadhaar" checked><span class="ml-2">Aadhaar</span></label>
+                    <label class="inline-flex items-center"><input type="radio" name="kyc_type" value="passport"><span class="ml-2">Passport</span></label>
+                </div>
+                <input type="text" id="kyc_number" required class="mt-2 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white">
+            </div>
+            <div><label for="start_date" class="block text-sm font-medium text-gray-300">Trip Start Date</label><input type="date" id="start_date" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"></div>
+            <div><label for="end_date" class="block text-sm font-medium text-gray-300">Trip End Date</label><input type="date" id="end_date" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"></div>
+            <div><label for="trip_itinerary" class="block text-sm font-medium text-gray-300">Trip Itinerary</label><textarea id="trip_itinerary" rows="3" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"></textarea></div>
+            <div><label for="emergency_contact" class="block text-sm font-medium text-gray-300">Emergency Contact</label><input type="text" id="emergency_contact" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"></div>
+            <button type="submit" class="w-full bg-green-600 text-white font-semibold py-3 px-6 rounded-lg text-lg hover:bg-green-700 btn">Generate ID</button>
+        </form>
+    </div>
+
+    <!-- End Trip Form -->
+    <div id="end-trip-form" class="hidden space-y-4">
+        <h2 class="text-xl font-semibold text-white">End a Trip</h2>
+        <form id="end-form" class="space-y-4">
+            <div><label for="id_to_end" class="block text-sm font-medium text-gray-300">Enter Tourist ID</label><input type="text" id="id_to_end" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"></div>
+            <button type="submit" class="w-full bg-red-600 text-white font-semibold py-3 px-6 rounded-lg text-lg hover:bg-red-700 btn">End Trip</button>
+        </form>
+    </div>
+
+    <!-- ID Card Display -->
+    <div id="id-card-display" class="hidden bg-gray-800 p-6 rounded-xl space-y-4 shadow-xl">
+        <h2 class="text-2xl font-bold text-white text-center">Digital Tourist ID</h2>
+        <p class="text-sm font-semibold text-yellow-400 text-center">Verified by Blockchain</p>
+        <p id="tourist-id-display" class="text-center text-xl font-bold text-white break-all"></p>
+        <div class="flex justify-center mt-4"><img id="qr-code-img" class="w-40 h-40 rounded-lg" alt="QR Code"></div>
+        <div id="id-details" class="text-sm text-gray-300 mt-4 space-y-1"></div>
+        <div class="mt-4"><p class="text-sm font-medium text-gray-300">Trip Status</p><p id="status-display" class="font-bold text-lg"></p></div>
+    </div>
+
+    <div id="message-box" class="hidden text-center p-4 rounded-lg text-sm font-medium"></div>
+    <button id="back-btn" class="hidden w-full bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg text-lg hover:bg-gray-600 btn">Back to Menu</button>
+</div>
+
+<script>
+    const YOUR_LOCAL_IP_ADDRESS = '10.94.109.213';
+    const API_BASE_URL = `http://${YOUR_LOCAL_IP_ADDRESS}:5000`;
+
+    const mainMenu = document.getElementById('main-menu');
+    const startTripBtn = document.getElementById('start-trip-btn');
+    const endTripBtn = document.getElementById('end-trip-btn');
+    const startTripForm = document.getElementById('start-trip-form');
+    const endTripForm = document.getElementById('end-trip-form');
+    const registrationForm = document.getElementById('registration-form');
+    const endForm = document.getElementById('end-form');
+    const idCardDisplay = document.getElementById('id-card-display');
+    const qrCodeImg = document.getElementById('qr-code-img');
+    const touristIdDisplay = document.getElementById('tourist-id-display');
+    const idDetails = document.getElementById('id-details');
+    const messageBox = document.getElementById('message-box');
+    const backBtn = document.getElementById('back-btn');
+    const statusDisplay = document.getElementById('status-display');
+
+    const showMessage = (msg, type='info') => {
+        messageBox.textContent = msg;
+        messageBox.className = `p-4 rounded-lg text-sm font-medium mt-4 ${type==='success'?'bg-green-700 text-green-100':type==='error'?'bg-red-700 text-red-100':'bg-blue-700 text-blue-100'}`;
+        messageBox.style.display = 'block';
+    }
+
+    const hideAllSections = () => {
+        [mainMenu, startTripForm, endTripForm, idCardDisplay, messageBox, backBtn].forEach(e => e.classList.add('hidden'));
+    }
+
+    const showSection = (section) => {
+        hideAllSections();
+        if (section === 'main') mainMenu.classList.remove('hidden');
+        else {
+            backBtn.classList.remove('hidden');
+            if (section === 'start') startTripForm.classList.remove('hidden');
+            else if (section === 'end') endTripForm.classList.remove('hidden');
+            else if (section === 'idcard') idCardDisplay.classList.remove('hidden');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('main');
+        showMessage('Please ensure the Python backend is running on your network.', 'info');
+    });
+
+    startTripBtn.addEventListener('click', () => showSection('start'));
+    endTripBtn.addEventListener('click', () => showSection('end'));
+    backBtn.addEventListener('click', () => showSection('main'));
+
+    registrationForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showMessage('Sending data to backend...', 'info');
+        const formData = {
+            name: document.getElementById('name').value,
+            age: document.getElementById('age').value,
+            dob: document.getElementById('dob').value,
+            kyc_type: document.querySelector('input[name="kyc_type"]:checked').value,
+            kyc_number: document.getElementById('kyc_number').value,
+            start_date: document.getElementById('start_date').value,
+            end_date: document.getElementById('end_date').value,
+            trip_itinerary: document.getElementById('trip_itinerary').value,
+            emergency_contact: document.getElementById('emergency_contact').value
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/register_tourist`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                touristIdDisplay.textContent = `Tourist ID: ${result.tourist_id}`;
+                idDetails.innerHTML = `
+                    <div><strong>Name:</strong> ${formData.name}</div>
+                    <div><strong>Age:</strong> ${formData.age}</div>
+                    <div><strong>DOB:</strong> ${formData.dob}</div>
+                    <div><strong>KYC:</strong> ${formData.kyc_type} - ${formData.kyc_number}</div>
+                    <div><strong>Trip Dates:</strong> ${formData.start_date} to ${formData.end_date}</div>
+                    <div><strong>Itinerary:</strong> ${formData.trip_itinerary}</div>
+                    <div><strong>Emergency Contact:</strong> ${formData.emergency_contact}</div>
+                `;
+                statusDisplay.textContent = "Active";
+                statusDisplay.classList.remove('text-red-400');
+                statusDisplay.classList.add('text-green-400');
+                qrCodeImg.src = result.qr_code_data;
+                showSection('idcard');
+                showMessage('Digital ID generated and verified by blockchain!', 'success');
+            } else {
+                showMessage(result.error || 'Failed to register tourist.', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showMessage('Network error. Is the backend running?', 'error');
+        }
+    });
+
+    endForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const idToEnd = document.getElementById('id_to_end').value;
+        showMessage('Sending request to end trip...', 'info');
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/end_trip`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tourist_id: idToEnd })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                showMessage(result.message, 'success');
+            } else {
+                showMessage(result.error || 'Failed to end trip.', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showMessage('Network error. Is the backend running?', 'error');
+        }
+    });
+</script>
+</body>
+</html>
