@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Tourist Safety System</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="login-screen" class="screen active">
+            <div class="login-container">
+                <div class="login-header">
+                    <div class="logo">
+                        <div class="shield-icon">🛡️</div>
+                        <h1>SafeTravel India</h1>
+                        <p>Smart Tourist Safety Monitoring</p>
+                    </div>
+                </div>
+                
+                <div class="login-tabs">
+                    <button class="tab-btn active" onclick="switchTab('tourist')">Tourist</button>
+                    <button class="tab-btn" onclick="switchTab('police')">Police</button>
+                </div>
+
+                <div class="login-form">
+                    <div class="form-group">
+                        <input type="email" id="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" placeholder="Password" required>
+                    </div>
+                    <button class="login-btn" onclick="login()">
+                        <span>Sign In</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                    <button class="register-btn" onclick="showRegister()">New Tourist? Register Here</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Screen -->
+        <div id="register-screen" class="screen">
+            <div class="register-container">
+                <button class="back-btn" onclick="showLogin()">← Back</button>
+                <h2>Tourist Registration</h2>
+                
+                <form class="register-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" placeholder="Phone Number" required>
+                    </div>
+                    <div class="form-group">
+                        <select required>
+                            <option value="">Select Nationality</option>
+                            <option value="indian">Indian</option>
+                            <option value="us">United States</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Passport/Aadhaar Number" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" placeholder="Trip Start Date" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" placeholder="Trip End Date" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Trip Itinerary (optional)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" placeholder="Emergency Contact Number" required>
+                    </div>
+                    <button type="button" class="register-submit-btn" onclick="registerTourist()">
+                        Complete Registration
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tourist Dashboard -->
+        <div id="tourist-dashboard" class="screen">
+            <header class="app-header">
+                <div class="header-left">
+                    <h1>SafeTravel</h1>
+                </div>
+                <div class="header-right">
+                    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                    <button class="profile-btn" onclick="showProfile()">👤</button>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </header>
+
+            <main class="tourist-main">
+                <!-- Quick Actions -->
+                <section class="quick-actions">
+                    <div class="sos-container">
+                        <button class="sos-btn" onclick="triggerSOS()">
+                            <div class="sos-pulse"></div>
+                            <div class="sos-icon">🚨</div>
+                            <span>SOS EMERGENCY</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-grid">
+                        <button class="action-btn" onclick="showEFIR()">
+                            <span class="action-icon">📋</span>
+                            <span>File E-FIR</span>
+                        </button>
+                        <button class="action-btn" onclick="shareLocation()">
+                            <span class="action-icon">📍</span>
+                            <span>Share Location</span>
+                        </button>
+                        <button class="action-btn" onclick="showContacts()">
+                            <span class="action-icon">📞</span>
+                            <span>Emergency Contacts</span>
+                        </button>
+                        <button class="action-btn" onclick="showSafetyTips()">
+                            <span class="action-icon">💡</span>
+                            <span>Safety Tips</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Digital ID -->
+                <section class="digital-id-card">
+                    <h3>My Digital Tourist ID</h3>
+                    <div class="id-card">
+                        <div class="id-header">
+                            <div class="id-flag">🇮🇳</div>
+                            <div class="id-title">Government of India - Tourist ID</div>
+                        </div>
+                        <div class="id-content">
+                            <div class="id-photo">👤</div>
+                            <div class="id-details">
+                                <div class="id-name">John Doe</div>
+                                <div class="id-number">TID: BLK-2024-001234</div>
+                                <div class="id-validity">Valid: Dec 1-15, 2024</div>
+                            </div>
+                            <div class="qr-code">
+                                <div class="qr-pattern"></div>
+                            </div>
+                        </div>
+                        <div class="blockchain-badge">
+                            <span>⛓️ Blockchain Verified</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Status Dashboard -->
+                <section class="status-dashboard">
+                    <h3>Safety Status</h3>
+                    <div class="status-grid">
+                        <div class="status-item safe">
+                            <span class="status-icon">✅</span>
+                            <div class="status-text">
+                                <div class="status-title">Current Status</div>
+                                <div class="status-value">Safe</div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-icon">📍</span>
+                            <div class="status-text">
+                                <div class="status-title">Location</div>
+                                <div class="status-value">Mumbai, Maharashtra</div>
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-icon">⏱️</span>
+                            <div class="status-text">
+                                <div class="status-title">Last Check-in</div>
+                                <div class="status-value">2 min ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Assistant -->
+                <section class="ai-assistant">
+                    <button class="ai-btn" onclick="showChatbot()">
+                        <span class="ai-icon">🤖</span>
+                        <span>Ask SafeTravel Assistant</span>
+                        <span class="ai-pulse"></span>
+                    </button>
+                </section>
+            </main>
+        </div>
+
+        <!-- Police Dashboard -->
+        <div id="police-dashboard" class="screen">
+            <header class="app-header police-header">
+                <div class="header-left">
+                    <h1>🚔 Police Command Center</h1>
+                </div>
+                <div class="header-right">
+                    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                    <div class="alert-indicator">
+                        <span class="alert-count">3</span>
+                        <span class="alert-pulse"></span>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </header>
+
+            <main class="police-main">
+                <div class="dashboard-grid">
+                    <!-- Statistics Cards -->
+                    <section class="stats-section">
+                        <div class="stats-grid">
+                            <div class="stat-card urgent">
+                                <div class="stat-icon">🚨</div>
+                                <div class="stat-content">
+                                    <div class="stat-value">3</div>
+                                    <div class="stat-label">Active SOS</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📋</div>
+                                <div class="stat-content">
+                                    <div class="stat-value">12</div>
+                                    <div class="stat-label">E-FIRs Today</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-content">
+                                    <div class="stat-value">247</div>
+                                    <div class="stat-label">Tourists</div>
+                                </div>
+                            </div>
+                            <div class="stat-card success">
+                                <div class="stat-icon">✅</div>
+                                <div class="stat-content">
+                                    <div class="stat-value">18</div>
+                                    <div class="stat-label">Resolved</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Live Map -->
+                    <section class="map-section">
+                        <div class="map-header">
+                            <h3>Live Incident Map</h3>
+                            <div class="map-controls">
+                                <button class="map-btn active" onclick="filterIncidents('all')">All</button>
+                                <button class="map-btn" onclick="filterIncidents('sos')">SOS</button>
+                                <button class="map-btn" onclick="filterIncidents('efir')">E-FIR</button>
+                            </div>
+                        </div>
+                        <div id="incident-map" class="incident-map"></div>
+                    </section>
+
+                    <!-- Active Alerts -->
+                    <section class="alerts-section">
+                        <h3>Active Alerts</h3>
+                        <div class="alerts-list">
+                            <div class="alert-item urgent">
+                                <div class="alert-status"></div>
+                                <div class="alert-content">
+                                    <div class="alert-header">
+                                        <span class="alert-type">SOS Emergency</span>
+                                        <span class="alert-time">2 min ago</span>
+                                    </div>
+                                    <div class="alert-details">
+                                        <div class="alert-tourist">Tourist: Sarah Johnson (TID: BLK-2024-001122)</div>
+                                        <div class="alert-location">📍 Colaba, Mumbai</div>
+                                    </div>
+                                    <div class="alert-actions">
+                                        <button class="alert-btn primary">Respond</button>
+                                        <button class="alert-btn">View Details</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert-item">
+                                <div class="alert-status"></div>
+                                <div class="alert-content">
+                                    <div class="alert-header">
+                                        <span class="alert-type">E-FIR: Theft</span>
+                                        <span class="alert-time">15 min ago</span>
+                                    </div>
+                                    <div class="alert-details">
+                                        <div class="alert-tourist">Tourist: Mark Wilson (TID: BLK-2024-001089)</div>
+                                        <div class="alert-location">📍 Gateway of India</div>
+                                    </div>
+                                    <div class="alert-actions">
+                                        <button class="alert-btn primary">Assign</button>
+                                        <button class="alert-btn">View FIR</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="alert-item warning">
+                                <div class="alert-status"></div>
+                                <div class="alert-content">
+                                    <div class="alert-header">
+                                        <span class="alert-type">Geo-fence Alert</span>
+                                        <span class="alert-time">1 hour ago</span>
+                                    </div>
+                                    <div class="alert-details">
+                                        <div class="alert-tourist">Tourist: Lisa Chen (TID: BLK-2024-001201)</div>
+                                        <div class="alert-location">📍 Restricted Zone - Dharavi</div>
+                                    </div>
+                                    <div class="alert-actions">
+                                        <button class="alert-btn primary">Contact</button>
+                                        <button class="alert-btn">Track</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+
+        <!-- E-FIR Modal -->
+        <div id="efir-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>File Electronic FIR</h2>
+                    <button class="modal-close" onclick="closeModal('efir-modal')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="efir-categories">
+                        <h3>Select Incident Category:</h3>
+                        <div class="category-grid">
+                            <button class="category-btn" onclick="selectCategory('missing')">
+                                <span class="category-icon">👥</span>
+                                <span>Missing Person</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('theft')">
+                                <span class="category-icon">🎒</span>
+                                <span>Theft/Robbery</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('harassment')">
+                                <span class="category-icon">⚠️</span>
+                                <span>Harassment</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('fraud')">
+                                <span class="category-icon">💳</span>
+                                <span>Fraud/Scam</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('medical')">
+                                <span class="category-icon">🏥</span>
+                                <span>Medical Emergency</span>
+                            </button>
+                            <button class="category-btn" onclick="selectCategory('accident')">
+                                <span class="category-icon">🚗</span>
+                                <span>Accident</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SOS Confirmation Modal -->
+        <div id="sos-modal" class="modal">
+            <div class="modal-content sos-modal-content">
+                <div class="sos-confirmation">
+                    <div class="sos-warning">⚠️</div>
+                    <h2>SOS Emergency Alert</h2>
+                    <p>This will immediately alert nearby police and emergency services to your location.</p>
+                    <div class="sos-timer">
+                        <div class="timer-circle">
+                            <span id="sos-countdown">5</span>
+                        </div>
+                        <p>Cancelling in <span id="timer-text">5</span> seconds</p>
+                    </div>
+                    <div class="sos-actions">
+                        <button class="sos-confirm" onclick="confirmSOS()">CONFIRM EMERGENCY</button>
+                        <button class="sos-cancel" onclick="cancelSOS()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chatbot Modal -->
+        <div id="chatbot-modal" class="modal">
+            <div class="modal-content chatbot-content">
+                <div class="modal-header">
+                    <h2>🤖 SafeTravel Assistant</h2>
+                    <button class="modal-close" onclick="closeModal('chatbot-modal')">×</button>
+                </div>
+                <div class="chatbot-body">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-message bot">
+                            <div class="message-avatar">🤖</div>
+                            <div class="message-content">
+                                <p>Hello! I'm your SafeTravel Assistant. I can help you with:</p>
+                                <ul>
+                                    <li>Emergency procedures</li>
+                                    <li>Local safety information</li>
+                                    <li>Tourist guidelines</li>
+                                    <li>Language translation</li>
+                                </ul>
+                                <p>How can I help you today?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chat-input" placeholder="Type your message..." onkeypress="handleChatEnter(event)">
+                        <button onclick="sendChatMessage()">Send</button>
+                        <button onclick="startVoiceInput()" class="voice-btn">🎤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
